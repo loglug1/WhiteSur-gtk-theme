@@ -198,6 +198,11 @@ window.background.chromium {
   background-color: $bg_color;
   color: $text_color;
 
+  //title bar/inactive tabs
+  headerbar.header-bar.titlebar {
+    background-color: #1b1b1b;
+  }
+
   headerbar.titlebar {
     padding: 0 $container_padding * 2;
 
