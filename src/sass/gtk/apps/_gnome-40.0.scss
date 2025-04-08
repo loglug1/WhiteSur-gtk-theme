@@ -84,8 +84,6 @@ $flap_sidebar_size: 240px;
     }
   }
 
-  headerbar > windowhandle > box { padding: 0 10px; }
-
   flap.unfolded,
   .sidebar-pane {
     &, &:backdrop {
@@ -103,7 +101,13 @@ $flap_sidebar_size: 240px;
           }
 
           &.sidebar-row {
-            .sidebar-icon { color: if($variant == 'light', $selected_bg_color, lighten($selected_bg_color, 20%)); }
+            .sidebar-icon {
+              @if $gnome_version == 'old' {
+                color: if($variant == 'light', $selected_bg_color, lighten($selected_bg_color, 20%));
+              } @else {
+                color: if($variant == 'light', $selected_bg_color, color-mix(in srgb, white 20%, $selected_bg_color));
+              }
+            }
           }
         }
       }
@@ -177,23 +181,23 @@ $flap_sidebar_size: 240px;
       }
     }
   }
+}
 
-  // Floating Bar
-  .floating-bar {
-    padding: 2px;
-    background-color: $selected_bg_color;
-    color: $selected_fg_color;
-    border-radius: $wm_radius - $container_padding;
-    margin: $container_padding;
-    box-shadow: $shadow_5;
+// Floating Bar
+.floating-bar {
+  padding: 2px;
+  background-color: $selected_bg_color;
+  color: $selected_fg_color;
+  border-radius: $wm_radius - $container_padding;
+  margin: $container_padding;
+  box-shadow: $shadow_5;
 
-    > button.circular.flat {
-      border-radius: $circular_radius;
-      min-height: 24px;
-      min-width: 24px;
-      padding: 0;
-      @extend %selected-button;
-    }
+  > button.circular.flat {
+    border-radius: $circular_radius;
+    min-height: 24px;
+    min-width: 24px;
+    padding: 0;
+    @extend %selected-button;
   }
 }
 
@@ -205,9 +209,8 @@ $flap_sidebar_size: 240px;
 }
 
 #NautilusQueryEditor { // search entry
-  padding: 0 $container_padding;
+  padding: 2px $container_padding;
   border-spacing: 0;
-  margin: 9px 0 8px 0;
 
   > image, > box, > text {
     margin: 0;
@@ -233,7 +236,7 @@ $flap_sidebar_size: 240px;
 #NautilusPathBar {
   background-color: $fill_color;
   border-radius: $bt_radius;
-  margin: 8px 0 8px $container_padding;
+  margin: 0 0 0 $container_padding;
 
   #NautilusPathButton {
     margin: 0 $container_padding / 2;
@@ -261,12 +264,6 @@ navigation-view-page > toolbarview > scrolledwindow > viewport > clamp {
   > box > box > stack > button {
     margin-top: $container_padding * 2;
   }
-}
-
-// Extensions
-window.nightthemeswitcher headerbar {
-  background: $header_bg;
-  color: $header_fg;
 }
 
 //
@@ -352,6 +349,66 @@ preferencesgroup > box {
     &:selected {
       outline-color: $selected_bg_color;
       background-color: transparent;
+    }
+  }
+
+  .cutout-button { background-color: $dialog_bg_color; }
+
+  @if $gnome_version == 'new' {
+    button.accent-button {
+      min-height: 24px;
+      min-width: 24px;
+      padding: $base_padding / 2;
+      border-radius: $circular_radius;
+      background: var(--accent-bg-color);
+      outline: none;
+      background-clip: content-box;
+      box-shadow: none;
+      border: none;
+
+      &:hover { box-shadow: 0 0 0 3px $divider_color; }
+
+      &:checked { box-shadow: 0 0 0 3px var(--accent-bg-color); }
+
+      &.blue, &.teal, &.green, &.yellow, &.orange, &.red, &.pink, &.purple, &.slate {
+        --accent-color: oklab(from var(--accent-bg-color) var(--standalone-color-oklab));
+      }
+
+      &.blue {
+        --accent-bg-color: var(--accent-blue);
+      }
+
+      &.teal {
+        --accent-bg-color: var(--accent-teal);
+      }
+
+      &.green {
+        --accent-bg-color: var(--accent-green);
+      }
+
+      &.yellow {
+        --accent-bg-color: var(--accent-yellow);
+      }
+
+      &.orange {
+        --accent-bg-color: var(--accent-orange);
+      }
+
+      &.red {
+        --accent-bg-color: var(--accent-red);
+      }
+
+      &.pink {
+        --accent-bg-color: var(--accent-pink);
+      }
+
+      &.purple {
+        --accent-bg-color: var(--accent-purple);
+      }
+
+      &.slate {
+        --accent-bg-color: var(--accent-slate);
+      }
     }
   }
 }
@@ -1226,10 +1283,54 @@ window.background.csd {
 }
 
 //
+// Gnome extensions tool
+//
+popover.details-popover {
+  .actions {
+    border-spacing: 6px;
+
+    > button { padding: 8px; }
+  }
+}
+
+//
+// Ptyxis
+//
+
+.ptyxis-window {
+  vte-terminal {
+    background: none;
+  }
+}
+
+//
 // Misc (other)
 //
 
 #desktopwindow.background {
   background-color: transparent;
   background-image: none;
+}
+
+//
+// Other Extensions
+//
+
+window.nightthemeswitcher headerbar {
+  background: $header_bg;
+  color: $header_fg;
+}
+
+//
+// Pamac manager
+//
+
+dialog-host > widget > widget > toolbarview {
+  > box > entry.search {
+    margin: $base_padding * 2 0;
+
+    + toastoverlay > stack {
+      border-top: 1px solid $header_border;
+    }
+  }
 }

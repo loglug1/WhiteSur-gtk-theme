@@ -75,7 +75,7 @@ $list_shadow: if($variant == 'light',
   background-color: if($variant == 'light', rgba(black, 0.03), rgba(white, 0.05));
   border: none;
 
-  @if $colorscheme == 'nord' {
+  @if $scheme == 'nord' {
     background-color: if($variant == 'light', rgba(#2e3440, 0.06), rgba(#4c566a, 0.25));
   } @else {
     background-color: if($variant == 'light', rgba(black, 0.03), rgba(white, 0.05));
@@ -918,6 +918,13 @@ button {
     &.text-button {
       padding-left: $container_padding + 4px;
       padding-right: $container_padding + 4px;
+      min-width: 80px;
+
+      &.circular {
+        min-height: $menuitem_size - 4px;
+        min-width: $menuitem_size - 4px;
+        padding: $container_padding - 2px;
+      }
     }
 
     &.image-button {
@@ -1524,7 +1531,7 @@ headerbar {
     font-size: smaller;
     padding-left: $container_padding * 2;
     padding-right: $container_padding * 2;
-    margin-top: -3px;
+    // margin-top: -3px;
     @extend %dim-label;
   }
 
@@ -1792,7 +1799,7 @@ headerbar {
       border: none;
       min-width: 16px;
       min-height: 16px;
-      margin: 0;
+      margin: 0 1px;
       padding: 0;
     }
   }
@@ -1960,7 +1967,7 @@ window.background > box.vertical > headerbar:not(.titlebar) { // reset headerbar
 
 $pathbar_button_checked_bg: if($variant == 'light', #808080, #b8b8b8);
 
-@if $colorscheme == 'nord' {
+@if $scheme == 'nord' {
   $pathbar_button_checked_bg: if($variant == 'light', #6b7894, #adb4c3);
 }
 
@@ -1988,8 +1995,8 @@ $pathbar_button_checked_bg: if($variant == 'light', #808080, #b8b8b8);
   &.text-button.image-button label { padding-left: 0; padding-right: 0; }
 
   &.text-button.image-button, & {
-    label:last-child { padding-right: 10px; }
-    label:first-child { padding-left: 10px; }
+    label:last-child { padding-right: $container_padding; }
+    label:first-child { padding-left: $container_padding; }
   }
 
   &.slider-button,
@@ -1998,7 +2005,7 @@ $pathbar_button_checked_bg: if($variant == 'light', #808080, #b8b8b8);
     padding-right: 1px;
   }
 
-  image {
+  &.image-button image {
     padding-left: $container_padding;
     padding-right: $container_padding;
   }
@@ -2033,8 +2040,13 @@ treeview.view {
     border-radius: 0;
     border-left-color: mix($selected_fg_color, $selected_bg_color, 50%);
     border-top-color: rgba($fg_color, 0.15); // doesn't work unfortunately
+    background-color: $selected_bg_color;
+    color: $selected_fg_color;
 
-    @extend %selected_items;
+    &:hover {
+      background-color: if($variant=='light', darken($selected_bg_color, 3%), lighten($selected_bg_color, 3%));
+      color: $selected_fg_color;
+    }
   }
 
   &:disabled {
@@ -2210,18 +2222,21 @@ menubar,
 menu {
   margin: 0;
   padding: $container_padding;
-  border-radius: $mn_radius;
   background-color: opacify($menu_bg, 1);
-  border: none;
   color: $fg_color;
+  border: none; // adds borders in a non composited env
+  border-radius: 0;
 
   @if $variant == 'dark' { box-shadow: inset 0 0 0 1px $highlight_color; }
 
-  .csd & {
+  .background.csd > &,
+  .background.popup > & {
+    border: none; // axes borders in a composited env
+    border-radius: $mn_radius;
     background-color: $menu_bg;
   }
 
-  separator {
+  > separator {
     margin: 3px 4px;
     min-height: 1px;
     background-color: $borders_color;
@@ -2233,7 +2248,7 @@ menu {
     min-height: 12px;
     min-width: 40px;
     padding: $container_padding / 2 $container_padding;
-    border-radius: $bt_radius;
+    border-radius: $bt_radius / 2;
     text-shadow: none;
     color: $fg_color;
     font: initial;
@@ -2246,23 +2261,18 @@ menu {
 
       // image { -gtk-icon-style: symbolic; }
 
-      arrow {
+      > arrow {
         transition: none;
         color: $selected_fg_color;
       }
 
-      menu { //sunmenu
+      menu { //submenu
         arrow {
-          color: $fg_color;
           text-shadow: none;
           -gtk-icon-shadow: none;
         }
 
         // menuitem { -gtk-icon-style: symbolic; }
-
-        menuitem:hover {
-          arrow { color: $selected_fg_color; }
-        }
       }
     }
 
@@ -2300,6 +2310,10 @@ menu {
         &:dir(rtl) { margin-left: 6px; margin-right: 0; }
       }
     }
+  }
+
+  .background.csd > & > menuitem {
+    border-radius: $bt_radius;
   }
 
   // overflow buttons
@@ -2862,7 +2876,7 @@ checkbutton, radiobutton {
 }
 
 $check_radio_border: if($variant == 'light', rgba(black, 0.2), rgba(black, 0.1));
-$check_radio_image: if($colorscheme == 'nord', linear-gradient(0deg, #59647b 0%, #475061 100%), linear-gradient(0deg, #6a6a6a 0%, #545454 100%));
+$check_radio_image: if($scheme == 'nord', linear-gradient(0deg, #59647b 0%, #475061 100%), linear-gradient(0deg, #6a6a6a 0%, #545454 100%));
 $check_radio_checked_image: linear-gradient(0deg, darken($selected_bg_color, 5%) 0%, lighten($selected_bg_color, 5%) 100%);
 
 %check,
@@ -4271,11 +4285,6 @@ colorchooser .popover.osd { border-radius: $bt_radius; }
   box-shadow: inset 0px -2px 0px if($variant=='light', transparentize(black, 0.95), transparentize(black, 0.85));
 }
 
-stackswitcher {
-  button.text-button { min-width: 80px; }
-  // button.circular { @extend %circular_button; }
-}
-
 viewswitcher {
   button:not(.suggested-action):not(.destructive-action) {
     margin: 0;
@@ -4423,7 +4432,7 @@ headerbar {
     &.close, &.maximize, &.minimize {
       min-width: 16px;
       min-height: 16px;
-      margin: 0;
+      margin: 0 1px;
       padding: 0;
       background-position: center;
       background-repeat: no-repeat;

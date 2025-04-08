@@ -23,29 +23,13 @@ $popover_bubble_bg: if($variant == 'light', rgba(white, 0.95), rgba(lighten($bas
   }
 }
 
-%show_apps_bigsur {
-  .show-apps-icon {
-    color: transparent !important;
-    background-image: url("assets/view-app-grid.svg");
-    background-size: contain;
-  }
-
-  &,
-  &:hover,
-  &:active,
-  &:checked,
-  &:focus {
-    .overview-icon, .show-apps-icon { color: transparent !important; }
-  }
-}
-
 // overall menu
 #calendarArea {
   padding: $base_margin 0;
 }
 
 .datemenu-popover {
-  border-radius: $base_border_radius + $base_padding * 2.5 !important;
+  border-radius: $bt_radius + $base_padding * 4 !important;
 }
 
 // Calendar menu side column
@@ -109,8 +93,8 @@ $popover_bubble_bg: if($variant == 'light', rgba(white, 0.95), rgba(lighten($bas
   border: none;
   box-shadow: none !important;
   background-color: transparent;
-  padding: $base_padding !important;
-  margin: 0 !important;
+  padding: $base_padding;
+  margin: 0 $base_padding;
   text-shadow: none;
   // border-radius: $base_border_radius;
 
@@ -152,12 +136,12 @@ $popover_bubble_bg: if($variant == 'light', rgba(white, 0.95), rgba(lighten($bas
   .calendar-day,
   .calendar-day-base {
     @extend %numeric;
-    // @extend %smaller;
+    @extend %smaller;
     text-align: center;
-    width: 2.6em !important;
-    height: 2.6em !important;
-    padding: 2px !important;
-    margin: 2px !important;
+    width: if($font_size == 'normal', 3em, 2.8em);
+    height: if($font_size == 'normal', 3em, 2.8em);
+    padding: 0;
+    margin: 2px;
     border-radius: $circular_radius;
     color: $alt_fg_color;
     font-feature-settings: "tnum";
@@ -215,7 +199,11 @@ $popover_bubble_bg: if($variant == 'light', rgba(white, 0.95), rgba(lighten($bas
     }
 
     &:active {
-      background-color: darken($primary_color, 5%);
+      @if $gnome_version == 'old' {
+        background-color: darken($primary_color, 5%);
+      } @else {
+        background-color: st-darken($primary_color, 5%);
+      }
       color: $light_fg_color !important;
       background-gradient-direction: none !important;
     }
@@ -226,8 +214,12 @@ $popover_bubble_bg: if($variant == 'light', rgba(white, 0.95), rgba(lighten($bas
       background-gradient-direction: none !important;
 
       &:hover, &:focus {
-        background-color: lighten($primary_color, 8%);
         color: $light_fg_color !important;
+        @if $gnome_version == 'old' {
+          background-color: lighten($primary_color, 8%);
+        } @else {
+          background-color: st-lighten($primary_color, 8%);
+        }
       }
     }
   }
@@ -254,10 +246,10 @@ $popover_bubble_bg: if($variant == 'light', rgba(white, 0.95), rgba(lighten($bas
 
   .calendar-week-number {
     @extend %smaller;
-    width: 2em !important;
-    height: 2em !important;
-    margin: 0.6em 0.6em 0.6em 0.2em !important;
-    padding: 2px !important;
+    width: 2.4em;
+    height: 2.4em;
+    margin: 6px;
+    padding: 0;
     border-radius: $bt_radius;
     background-color: if($variant == 'light', rgba(black, 0.05), rgba(white, 0.05));
     color: $hint_fg_color;
@@ -368,7 +360,7 @@ $popover_bubble_bg: if($variant == 'light', rgba(white, 0.95), rgba(lighten($bas
 // Weather
 .weather-button {
   .weather-box {
-    spacing: $base_spacing + $base_margin;
+    spacing: $base_spacing;
   }
 
   .weather-header-box {
@@ -392,15 +384,16 @@ $popover_bubble_bg: if($variant == 'light', rgba(white, 0.95), rgba(lighten($bas
 
   .weather-forecast-time {
     @extend %numeric;
-    @include fontsize(10pt);
+    @extend %smaller;
     color: $alt_fg_color;
     font-weight: normal;
-    padding-top: 0.2em;
-    padding-bottom: 0.4em;
+    padding-top: $base_padding;
+    padding-bottom: $base_padding;
   }
 
   .weather-forecast-icon {
     icon-size: 32px;
+    margin-bottom: $base_margin;
   }
 
   .weather-forecast-temp {

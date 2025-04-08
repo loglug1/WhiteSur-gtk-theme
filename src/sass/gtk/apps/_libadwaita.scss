@@ -116,6 +116,10 @@ preferencesgroup > box {
   > box.single-line {
     min-height: 34px;
   }
+
+  grid > box > switch {
+    margin: 14px 0;
+  }
 }
 
 //
@@ -232,18 +236,19 @@ toast {
 
 viewswitcher {
   margin: 0;
+  min-height: 26px;
 
   &.wide {
-    border-spacing: 0;
-
-    > button.toggle {
-      margin: 8px 0;
-    }
+    border-spacing: $container_padding / 2;
   }
 
   &.narrow > button.toggle {
     border-radius: 0;
     margin: 0;
+
+    indicatorbin > image {
+      -gtk-icon-size: 12px;
+    }
   }
 
   > button.toggle {
@@ -255,7 +260,7 @@ viewswitcher {
         font-size: 0.75rem;
         padding-top: $container_padding;
         padding-bottom: $container_padding;
-        border-spacing: 0;
+        border-spacing: $container_padding - 2px;
 
         > stack > label {
           padding-left: $container_padding + 2px;
@@ -265,12 +270,7 @@ viewswitcher {
 
       &.wide {
         padding: 0 $container_padding * 2;
-        border-spacing: 0;
-
-        > label, > indicatorbin > image {
-          padding-left: $container_padding / 2;
-          padding-right: $container_padding / 2;
-        }
+        border-spacing: $container_padding;
       }
     }
   }
@@ -343,6 +343,12 @@ indicatorbin {
     background: black;
   }
 
+  > image {
+    -gtk-icon-size: 16px;
+    margin-top: -4px;
+    margin-bottom: -4px;
+  }
+
   &.needs-attention > indicator {
     background: $selected_bg_color;
 
@@ -350,31 +356,35 @@ indicatorbin {
   }
 }
 
-headerbar > windowhandle > box viewswitcher.wide {
-  box-shadow: inset 0 0 0 1px $light_borders_color;
-  border-radius: $bt_radius;
-  padding: 0;
-  margin: 8px 0;
+headerbar > windowhandle > box viewswitcher {
+  min-height: 0;
 
-  > button.toggle {
-    margin: 0;
-    font-weight: 500;
+  &.wide {
+    box-shadow: inset 0 0 0 1px $light_borders_color;
     border-radius: $bt_radius;
+    padding: 0;
 
-    &:not(:first-child) {
-      border-width: 0 0 0 1px;
-      border-style: none solid none none;
-      border-image: linear-gradient(to bottom,
-                                    transparent 16%,
-                                    $light_borders_color 16%,
-                                    $light_borders_color 84%,
-                                    transparent 84%) 0 0 0 1 / 0 0 0 1px stretch;
-    }
+    > button.toggle {
+      margin: 0;
+      min-height: 0;
+      font-weight: 500;
+      border-radius: $bt_radius;
 
-    &:hover, &:active, &:checked {
-      border-image: none;
+      &:not(:first-child) {
+        border-width: 0 0 0 1px;
+        border-style: none solid none none;
+        border-image: linear-gradient(to bottom,
+                                      transparent 16%,
+                                      $light_borders_color 16%,
+                                      $light_borders_color 84%,
+                                      transparent 84%) 0 0 0 1 / 0 0 0 1px stretch;
+      }
 
-      & + button { border-image: none; }
+      &:hover, &:active, &:checked {
+        border-image: none;
+  
+        & + button { border-image: none; }
+      }
     }
   }
 }
@@ -792,7 +802,7 @@ toolbarview.undershoot-bottom scrolledwindow {
 // AdwDialog
 //
 
- floating-sheet {
+floating-sheet {
   > dimming {
     background-color: rgba(black, 0.35);
   }
@@ -843,5 +853,229 @@ dialog-host > dialog.osd:not(progressbar):not(button):not(menubutton):not(splitb
 
   sheet {
     @extend %osd;
+  }
+}
+
+//
+// AdwToolbarView
+//
+toolbarview {
+  > .top-bar,
+  > .bottom-bar {
+    searchbar,
+    actionbar {
+      > revealer > box {
+        background-color: transparent;
+        border: none;
+        box-shadow: none;
+      }
+    }
+
+    .toolbar  {
+      background-color: transparent;
+    }
+
+    .collapse-spacing {
+      padding-top: 0;
+      padding-bottom: 0;
+
+      headerbar {
+        min-height: $headerbar_size;
+
+        > windowhandle > box {
+          padding-top: 0;
+          padding-bottom: 0;
+        }
+
+        &.default-decoration {
+          min-height: $medium_size;
+
+          > windowhandle > box {
+            padding-top: 0;
+            padding-bottom: 0;
+          }
+        }
+      }
+
+      searchbar,
+      actionbar {
+        > revealer > box {
+          padding-top: $container_padding;
+          padding-bottom: $container_padding;
+        }
+      }
+
+      .toolbar  {
+        padding-top: $container_padding;
+        padding-bottom: $container_padding;
+      }
+
+      tabbar {
+        padding-top: 0;
+        padding-bottom: 0;
+      }
+    }
+
+    &.raised {
+      background-color: transparent;
+      color: $header_fg;
+
+      &:backdrop {
+        background-color: transparent;
+      }
+    }
+
+    &:backdrop > windowhandle {
+      filter: none;
+    }
+  }
+
+  > .bottom-bar {
+    padding: 0;
+    border-spacing: 0;
+    box-shadow: inset 0 1px $borders_color;
+    background-color: darken($bg_color, 3%);
+    color: $text_color;
+
+    &:backdrop {
+      background-color: $bg_color;
+      color: $disabled_fg_color;
+    }
+
+    actionbar { @extend %actionbar-inline; }
+  }
+
+  > .top-bar.raised {
+    box-shadow: none;
+
+    &.border {
+      box-shadow: none;
+    }
+  }
+
+  > .bottom-bar.raised {
+    box-shadow: none;
+
+    &.border {
+      box-shadow: none;
+    }
+  }
+}
+
+// ThemeSelector
+themeselector, // Gnome text editor
+panelthemeselector { // Gnome builder
+  margin: 9px;
+
+  checkbutton {
+    padding: 0;
+    min-height: 44px;
+    min-width: 44px;
+    padding: 1px;
+    background-clip: content-box;
+    border-radius: $circular_radius;
+    box-shadow: inset 0 0 0 1px $borders_color;
+
+    &.follow:checked,
+    &.light:checked,
+    &.dark:checked {
+      box-shadow: inset 0 0 0 2px $primary_color;
+    }
+
+    &.follow {
+      background-image: linear-gradient(to bottom right, #ffffff 50%, #202020 50%);
+    }
+
+    &.light {
+      background-color: #ffffff;
+    }
+
+    &.dark {
+      background-color: #202020;
+    }
+
+    &.theme-selector radio {
+      -gtk-icon-source: none;
+      border: none;
+      background: none;
+      box-shadow: none;
+      min-width: 12px;
+      min-height: 12px;
+      transform: translate(27px, 14px);
+      padding: 3px;
+
+      &:hover, &:active, &:checked {
+        background-color: transparent;
+      }
+
+      &:checked {
+        -gtk-icon-source: -gtk-icontheme("object-select-symbolic");
+        color: white;
+        background-color: $primary_color;
+
+        &, &:hover, &:active {
+          box-shadow: 0 2px 3px -1px rgba(black, 0.08), 0 1px 2px 0 rgba(black, 0.1);
+        }
+      }
+    }
+  }
+}
+
+themeswitcher { // Gnome console
+  padding: 6px;
+
+  .check {
+    min-height: 20px;
+    min-width: 20px;
+    background: none;
+    padding: 0;
+    margin: 0;
+    border-radius: $circular_radius;
+    color: white;
+    background-color: $primary_color;
+
+    &, &:hover, &:active {
+      box-shadow: 0 2px 3px -1px rgba(black, 0.08), 0 1px 2px 0 rgba(black, 0.1);
+    }
+  }
+
+  checkbutton {
+    padding: 0;
+    min-height: 44px;
+    min-width: 44px;
+    padding: 1px;
+    background-clip: content-box;
+    border-radius: $circular_radius;
+    box-shadow: inset 0 0 0 1px $borders_color;
+
+    &:checked {
+      box-shadow: inset 0 0 0 2px $primary_color;
+    }
+
+    radio {
+      &, &:hover, &:active, &:checked, &:checked:hover, &:checked:active {
+        background-color: transparent;
+        border: none;
+        background: none;
+        box-shadow: none;
+        color: transparent;
+        -gtk-icon-source: none;
+        -gtk-icon-size: 0;
+      }
+    }
+
+    &.system {
+      background: linear-gradient(-45deg, #1e1e1e 50%, white 50%);
+    }
+
+    &.light {
+      color: gtkalpha(black, .8);
+      background-color: white;
+    }
+
+    &.dark {
+      color: white;
+      background-color: #1e1e1e;
+    }
   }
 }

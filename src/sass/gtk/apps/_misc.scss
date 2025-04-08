@@ -394,14 +394,15 @@ window.background:not(.solid-csd):not(.csd) {
   }
 }
 
-toolbar  {
+// Fix libreoffice toolbar button background color
+toolbar.toolbar {
   box:not(.linked) > button {
     &:active {
       color: $fg_color;
       background-color: if($variant == 'light', mix(black, $bg_color, 10%), mix(white, $bg_color, 10%));
       border-color: transparent;
     }
-  
+
     &:checked {
       color: $fg_color;
       background-color: if($variant == 'light', mix(black, $bg_color, 5%), mix(white, $bg_color, 5%));
@@ -779,11 +780,6 @@ menubar.-vala-panel-background {
 
   > menu {
     padding: $container_padding;
-
-    separator {
-      margin: 0;
-      border-bottom: none;
-    }
 
     > menuitem {
       border-radius: $bt_radius;
